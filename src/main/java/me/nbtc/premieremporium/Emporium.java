@@ -2,28 +2,31 @@ package me.nbtc.premieremporium;
 
 import io.github.mqzen.menus.Lotus;
 import lombok.Getter;
+import me.nbtc.premieremporium.base.User;
 import me.nbtc.premieremporium.commands.MarketPlaceCommand;
 import me.nbtc.premieremporium.commands.SellCommand;
+import me.nbtc.premieremporium.commands.TransactionsCommand;
 import me.nbtc.premieremporium.repositories.ConfigRepository;
 import me.nbtc.premieremporium.repositories.MarketRepository;
 import me.nbtc.premieremporium.repositories.MenuRepository;
 import me.nbtc.premieremporium.repositories.Registry;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.UUID;
 
 @Getter
 public final class Emporium extends JavaPlugin {
     private static @Getter Emporium instance;
     private final Registry registry = new Registry();
     private final HashMap<String, String> configValues = new HashMap<>();
+    private final HashMap<UUID, User> users = new HashMap<>();
     private Lotus lotus;
 
     private BukkitAudiences adventure;
@@ -71,9 +74,16 @@ public final class Emporium extends JavaPlugin {
 
             commandMap.register("emporium", new MarketPlaceCommand());
             commandMap.register("emporium", new SellCommand());
+            commandMap.register("emporium", new TransactionsCommand());
         } catch (Exception e) {
             getLogger().severe("Failed to register commands");
             e.printStackTrace();
         }
+    }
+    public User getUser(Player player){
+        if (users.containsKey(player.getUniqueId())) return users.get(player.getUniqueId());
+        User user = new User(player.getUniqueId(), player.getName());
+        users.put(player.getUniqueId(), user);
+        return user;
     }
 }

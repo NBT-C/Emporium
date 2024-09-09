@@ -3,22 +3,15 @@ package me.nbtc.premieremporium.commands;
 import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.repositories.MenuRepository;
 import me.nbtc.premieremporium.utils.MessageUtil;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class MarketPlaceCommand extends Command implements Listener {
-    public MarketPlaceCommand() {
-        super("marketplace");
+public class TransactionsCommand extends Command implements Listener {
+    public TransactionsCommand() {
+        super("transactions");
     }
 
     @Override
@@ -29,17 +22,17 @@ public class MarketPlaceCommand extends Command implements Listener {
         }
 
         Player player = (Player) sender;
-        if (!player.hasPermission("marketplace.view")){
+        if (!player.hasPermission("marketplace.transactions")){
             MessageUtil.msg(player, "no-permission");
             return false;
         }
 
         if (args.length != 0){
-            MessageUtil.msg(player, "invalid-argument-marketplace");
+            MessageUtil.msg(player, "invalid-argument-transactions");
             return false;
         }
 
-        Emporium.getInstance().getRepository(MenuRepository.class).openMarketPlace(player);
+        Emporium.getInstance().getRepository(MenuRepository.class).openTransactions(player);
         return false;
     }
 

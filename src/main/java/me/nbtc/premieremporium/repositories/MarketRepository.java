@@ -1,8 +1,11 @@
 package me.nbtc.premieremporium.repositories;
 
 import lombok.Getter;
+import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.base.ItemOwner;
 import me.nbtc.premieremporium.base.MarketItem;
+import me.nbtc.premieremporium.base.Transaction;
+import me.nbtc.premieremporium.utils.MessageUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,4 +29,13 @@ public class MarketRepository {
         marketItems.add(marketItem);
     }
 
+    public void handleItemPurchase(Player buyer, MarketItem item){
+        buyer.getInventory().addItem(item.getItem());
+        marketItems.remove(item);
+
+        Emporium.getInstance().getRepository(MenuRepository.class).openMarketPlace(buyer.getPlayer());
+        MessageUtil.msg(buyer, "bought-successfully");
+
+        Emporium.getInstance().getUser(buyer).getTransactions().add(new Transaction(System.currentTimeMillis(), item));
+    }
 }
