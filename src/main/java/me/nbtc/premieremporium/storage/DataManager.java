@@ -2,15 +2,17 @@ package me.nbtc.premieremporium.storage;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import me.nbtc.premieremporium.Emporium;
+import me.nbtc.premieremporium.repositories.ConfigRepository;
 import org.bson.Document;
-import org.nbtc.sheepwars.SheepWars;
 
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class DataManager {
     private final Map<String, MongoDatabase> databases = new HashMap<>();
-    final String databaseName = SheepWars.getInstance().getConfiguration().getConfig().getString("mongo.dbname");
+    final String databaseName = Emporium.getInstance().getRepository(ConfigRepository.class).getSettings().getConfig().getString("mongo.dbname");
 
     public MongoDatabase getDatabase() {
         MongoDatabase database = databases.get(databaseName);
@@ -31,14 +33,18 @@ public class DataManager {
 
     private void checkCollection() {
         MongoDatabase database = getDatabase();
-        MongoCollection<Document> collection = database.getCollection("sheepwars");
+        MongoCollection<Document> collection = database.getCollection("emporium");
 
         collection.createIndex(new Document("uuid", 1));
     }
 
     public boolean initDatasource() {
         try {
-            final String connectionString = SheepWars.getInstance().getConfiguration().getConfig().getString("mongo.connectionString");
+            final String connectionString = Emporium.getInstance().getRepository(ConfigRepository.class).getSettings().getConfig().getString("mongo.connectionString");
+
+            if (connectionString == null || databaseName == null){
+                throw new RuntimeException("Please enter mongo details in settings.yml");
+            }
 
             com.mongodb.client.MongoClient mongoClient = com.mongodb.client.MongoClients.create(connectionString);
             MongoDatabase database = mongoClient.getDatabase(databaseName);
@@ -54,7 +60,6 @@ public class DataManager {
     }
 
     public boolean isClosed(String databaseName) {
-        // MongoDB does not have a concept of closing databases in the same way SQL does
         return !databases.containsKey(databaseName);
     }
 

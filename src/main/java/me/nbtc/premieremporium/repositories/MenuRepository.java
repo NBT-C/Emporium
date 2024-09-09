@@ -40,6 +40,7 @@ public class MenuRepository {
     }
     public void openTransactions(Player player){
         List<PageComponent> components = new ArrayList<>();
+        System.out.println(Emporium.getInstance().getUser(player).getName());
         List<Transaction> transactions = Emporium.getInstance().getUser(player).getTransactions();
         List<Transaction> reversedTransactions = new ArrayList<>(transactions);
         Collections.reverse(reversedTransactions);

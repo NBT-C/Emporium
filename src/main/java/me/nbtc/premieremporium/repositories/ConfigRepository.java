@@ -10,8 +10,10 @@ public class ConfigRepository {
     private final SimpleConfig messages;
     private final SimpleConfig marketPlaceGui;
     private final SimpleConfig transactionsGui;
+    private final SimpleConfig settings;
 
     public ConfigRepository() {
+        this.settings = new SimpleConfig("settings.yml");
         this.messages = new SimpleConfig("messages.yml");
         this.marketPlaceGui = new SimpleConfig("marketplacegui.yml");
         this.transactionsGui = new SimpleConfig("transactionsgui.yml");

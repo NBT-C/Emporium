@@ -6,8 +6,8 @@ import java.util.UUID;
 
 @Data
 public class ItemOwner {
-    private final String name;
-    private final UUID uuid;
+    private String name;
+    private UUID uuid;
 
     public ItemOwner(String name, UUID uuid) {
         this.name = name;
