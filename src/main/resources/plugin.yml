@@ -1,0 +1,5 @@
+name: Premier-Emporium
+version: '${project.version}'
+main: me.nbtc.premieremporium.Emporium
+api-version: '1.20'
+

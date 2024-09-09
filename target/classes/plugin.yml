@@ -1,0 +1,5 @@
+name: Premier-Emporium
+version: '1.0'
+main: me.nbtc.premieremporium.Emporium
+api-version: '1.20'
+
