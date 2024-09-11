@@ -1,6 +1,5 @@
-package me.nbtc.premieremporium.repositories;
+package me.nbtc.premieremporium.manager;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -16,12 +15,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
-public class MarketRepository {
+public class MarketManager {
     private List<MarketItem> marketItems = new ArrayList<>();
 
     public void addItem(Player owner, ItemStack item, double price) {
@@ -39,10 +37,10 @@ public class MarketRepository {
         buyer.getInventory().addItem(item.getItem());
         marketItems.remove(item);
 
-        Emporium.getInstance().getRepository(MenuRepository.class).openMarketPlace(buyer.getPlayer());
+        Emporium.getInstance().getMenuManager().openMarketPlace(buyer.getPlayer());
         MessageUtil.msg(buyer, "bought-successfully");
 
-        Emporium.getInstance().getUser(buyer).getTransactions().add(new Transaction(System.currentTimeMillis(), item));
+        Emporium.getInstance().getUserManager().getUser(buyer).getTransactions().add(new Transaction(System.currentTimeMillis(), item));
     }
     public void saveToMongo(){
         String serialized = Emporium.getInstance().getGson().toJson(marketItems);

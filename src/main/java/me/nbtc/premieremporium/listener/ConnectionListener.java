@@ -9,15 +9,23 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class ConnectionListener implements Listener {
     @EventHandler
-    public void onJoin(PlayerJoinEvent event){
+    public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        Emporium.getInstance().getUser(player).load();
+        try {
+            Emporium.getInstance().getUserManager().load(player);
+        } catch (Exception exception) {
+            System.out.println("MongoDB error [" + player.getUniqueId() + "]: " + exception.getMessage());
+        }
     }
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event){
-        Player player = event.getPlayer();
 
-        Emporium.getInstance().getUser(player).save();
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        try {
+            Emporium.getInstance().getUserManager().save(player);
+        } catch (Exception exception) {
+            System.out.println("MongoDB error [" + player.getUniqueId() + "]: " + exception.getMessage());
+        }
     }
 }

@@ -1,11 +1,10 @@
 package me.nbtc.premieremporium.commands;
 
 import me.nbtc.premieremporium.Emporium;
-import me.nbtc.premieremporium.repositories.MarketRepository;
+import me.nbtc.premieremporium.manager.MarketManager;
 import me.nbtc.premieremporium.utils.MessageUtil;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +53,7 @@ public class SellCommand extends Command {
             return false;
         }
 
-        Emporium.getInstance().getRepository(MarketRepository.class).addItem(player, player.getInventory().getItemInMainHand(), price);
+        Emporium.getInstance().getMarketManager().addItem(player, player.getInventory().getItemInMainHand(), price);
         return false;
     }
 }

@@ -1,15 +1,14 @@
 package me.nbtc.premieremporium.commands;
 
 import me.nbtc.premieremporium.Emporium;
-import me.nbtc.premieremporium.repositories.MenuRepository;
+import me.nbtc.premieremporium.manager.MenuManager;
 import me.nbtc.premieremporium.utils.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-public class MarketPlaceCommand extends Command implements Listener {
+public class MarketPlaceCommand extends Command {
     public MarketPlaceCommand() {
         super("marketplace");
     }
@@ -32,7 +31,7 @@ public class MarketPlaceCommand extends Command implements Listener {
             return false;
         }
 
-        Emporium.getInstance().getRepository(MenuRepository.class).openMarketPlace(player);
+        Emporium.getInstance().getMenuManager().openMarketPlace(player);
         return false;
     }
 

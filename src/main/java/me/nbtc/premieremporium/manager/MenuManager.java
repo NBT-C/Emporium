@@ -1,4 +1,4 @@
-package me.nbtc.premieremporium.repositories;
+package me.nbtc.premieremporium.manager;
 
 import io.github.mqzen.menus.base.pagination.PageComponent;
 import io.github.mqzen.menus.base.pagination.Pagination;
@@ -7,20 +7,20 @@ import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.base.ItemOwner;
 import me.nbtc.premieremporium.base.MarketItem;
 import me.nbtc.premieremporium.base.Transaction;
-import me.nbtc.premieremporium.menus.market.TransactionAutoPage;
-import me.nbtc.premieremporium.menus.market.TransactionMenuComponent;
-import me.nbtc.premieremporium.menus.transactions.MarketAutoPage;
-import me.nbtc.premieremporium.menus.transactions.MarketMenuComponent;
+import me.nbtc.premieremporium.menus.transactions.TransactionAutoPage;
+import me.nbtc.premieremporium.menus.transactions.TransactionMenuComponent;
+import me.nbtc.premieremporium.menus.market.MarketAutoPage;
+import me.nbtc.premieremporium.menus.market.MarketMenuComponent;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MenuRepository {
+public class MenuManager {
     public void openMarketPlace(Player player){
         List<PageComponent> components = new ArrayList<>();
-        List<MarketItem> items = Emporium.getInstance().getRepository(MarketRepository.class).getMarketItems();
+        List<MarketItem> items = Emporium.getInstance().getMarketManager().getMarketItems();
         List<MarketItem> reversedItems = new ArrayList<>(items);
         Collections.reverse(reversedItems);
         for (MarketItem marketItem : reversedItems){
@@ -40,8 +40,7 @@ public class MenuRepository {
     }
     public void openTransactions(Player player){
         List<PageComponent> components = new ArrayList<>();
-        System.out.println(Emporium.getInstance().getUser(player).getName());
-        List<Transaction> transactions = Emporium.getInstance().getUser(player).getTransactions();
+        List<Transaction> transactions = Emporium.getInstance().getUserManager().getUser(player).getTransactions();
         List<Transaction> reversedTransactions = new ArrayList<>(transactions);
         Collections.reverse(reversedTransactions);
         for (Transaction transaction : reversedTransactions){

@@ -1,4 +1,4 @@
-package me.nbtc.premieremporium.repositories;
+package me.nbtc.premieremporium.manager;
 
 import lombok.Getter;
 import me.nbtc.premieremporium.utils.config.SimpleConfig;
@@ -6,13 +6,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 @Getter
-public class ConfigRepository {
+public class ConfigManager {
     private final SimpleConfig messages;
     private final SimpleConfig marketPlaceGui;
     private final SimpleConfig transactionsGui;
     private final SimpleConfig settings;
 
-    public ConfigRepository() {
+    public ConfigManager() {
         this.settings = new SimpleConfig("settings.yml");
         this.messages = new SimpleConfig("messages.yml");
         this.marketPlaceGui = new SimpleConfig("marketplacegui.yml");

@@ -1,15 +1,13 @@
 package me.nbtc.premieremporium.commands;
 
 import me.nbtc.premieremporium.Emporium;
-import me.nbtc.premieremporium.repositories.MenuRepository;
 import me.nbtc.premieremporium.utils.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-public class TransactionsCommand extends Command implements Listener {
+public class TransactionsCommand extends Command {
     public TransactionsCommand() {
         super("transactions");
     }
@@ -32,7 +30,7 @@ public class TransactionsCommand extends Command implements Listener {
             return false;
         }
 
-        Emporium.getInstance().getRepository(MenuRepository.class).openTransactions(player);
+        Emporium.getInstance().getMenuManager().openTransactions(player);
         return false;
     }
 

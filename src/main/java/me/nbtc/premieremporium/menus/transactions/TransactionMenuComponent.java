@@ -1,17 +1,13 @@
-package me.nbtc.premieremporium.menus.market;
+package me.nbtc.premieremporium.menus.transactions;
 
 import io.github.mqzen.menus.base.pagination.PageComponent;
 import io.github.mqzen.menus.base.pagination.PageView;
 import io.github.mqzen.menus.misc.itembuilder.ItemBuilder;
 import me.nbtc.premieremporium.Emporium;
-import me.nbtc.premieremporium.base.ItemOwner;
-import me.nbtc.premieremporium.base.MarketItem;
 import me.nbtc.premieremporium.base.Transaction;
-import me.nbtc.premieremporium.menus.ConfirmPage;
-import me.nbtc.premieremporium.repositories.ConfigRepository;
+import me.nbtc.premieremporium.manager.ConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,7 +23,7 @@ public class TransactionMenuComponent implements PageComponent {
 
     @Override
     public ItemStack toItem() {
-        List<String> lore = Emporium.getInstance().getRepository(ConfigRepository.class).getTransactionsGui().getConfig().getStringList("item-lore");
+        List<String> lore = Emporium.getInstance().getConfigManager().getTransactionsGui().getConfig().getStringList("item-lore");
         Component[] finalLore = new Component[lore.size()];
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

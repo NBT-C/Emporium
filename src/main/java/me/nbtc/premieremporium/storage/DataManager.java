@@ -3,7 +3,7 @@ package me.nbtc.premieremporium.storage;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.nbtc.premieremporium.Emporium;
-import me.nbtc.premieremporium.repositories.ConfigRepository;
+import me.nbtc.premieremporium.manager.ConfigManager;
 import org.bson.Document;
 
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class DataManager {
     private final Map<String, MongoDatabase> databases = new HashMap<>();
-    final String databaseName = Emporium.getInstance().getRepository(ConfigRepository.class).getSettings().getConfig().getString("mongo.dbname");
+    final String databaseName = Emporium.getInstance().getConfigManager().getSettings().getConfig().getString("mongo.dbname");
 
     public MongoDatabase getDatabase() {
         MongoDatabase database = databases.get(databaseName);
@@ -40,7 +40,7 @@ public class DataManager {
 
     public boolean initDatasource() {
         try {
-            final String connectionString = Emporium.getInstance().getRepository(ConfigRepository.class).getSettings().getConfig().getString("mongo.connectionString");
+            final String connectionString = Emporium.getInstance().getConfigManager().getSettings().getConfig().getString("mongo.connectionString");
 
             if (connectionString == null || databaseName == null){
                 throw new RuntimeException("Please enter mongo details in settings.yml");

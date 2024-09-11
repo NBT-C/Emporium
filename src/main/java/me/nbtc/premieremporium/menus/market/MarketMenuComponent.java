@@ -1,4 +1,4 @@
-package me.nbtc.premieremporium.menus.transactions;
+package me.nbtc.premieremporium.menus.market;
 
 import io.github.mqzen.menus.base.pagination.PageComponent;
 import io.github.mqzen.menus.base.pagination.PageView;
@@ -7,7 +7,7 @@ import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.base.ItemOwner;
 import me.nbtc.premieremporium.base.MarketItem;
 import me.nbtc.premieremporium.menus.ConfirmPage;
-import me.nbtc.premieremporium.repositories.ConfigRepository;
+import me.nbtc.premieremporium.manager.ConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ public class MarketMenuComponent implements PageComponent {
 
     @Override
     public ItemStack toItem() {
-        List<String> lore = Emporium.getInstance().getRepository(ConfigRepository.class).getMarketPlaceGui().getConfig().getStringList("item-lore");
+        List<String> lore = Emporium.getInstance().getConfigManager().getMarketPlaceGui().getConfig().getStringList("item-lore");
         Component[] finalLore = new Component[lore.size()];
 
         for (int i = 0; i < lore.size(); i++) {

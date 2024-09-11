@@ -11,9 +11,9 @@ import io.github.mqzen.menus.titles.MenuTitle;
 import io.github.mqzen.menus.titles.MenuTitles;
 import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.base.MarketItem;
-import me.nbtc.premieremporium.repositories.ConfigRepository;
-import me.nbtc.premieremporium.repositories.MarketRepository;
-import me.nbtc.premieremporium.repositories.MenuRepository;
+import me.nbtc.premieremporium.manager.ConfigManager;
+import me.nbtc.premieremporium.manager.MarketManager;
+import me.nbtc.premieremporium.manager.MenuManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class ConfirmPage implements Menu {
 
         Emporium.getInstance().getLotus().openMenu(buyer, this);
     }
-    ConfigRepository configRepository = Emporium.getInstance().getRepository(ConfigRepository.class);
+    ConfigManager configManager = Emporium.getInstance().getConfigManager();
     @Override
     public String getName() {
         return "Confirm";
@@ -35,7 +35,7 @@ public class ConfirmPage implements Menu {
 
     @Override
     public @NotNull MenuTitle getTitle(DataRegistry extraData, Player opener) {
-        return MenuTitles.createModern(configRepository.getMPGString("confirm-purchase-gui"));
+        return MenuTitles.createModern(configManager.getMPGString("confirm-purchase-gui"));
     }
 
     @Override
@@ -46,26 +46,26 @@ public class ConfirmPage implements Menu {
     @Override
     public @NotNull Content getContent(DataRegistry extraData, Player opener, Capacity capacity) {
         Button yesButton = Button.clickable(
-                ItemBuilder.legacy(Material.valueOf(configRepository.getMPGString("yes-item")), 1, (short)0)
-                        .setDisplay(configRepository.getMPGString("yes-string")).build(),
+                ItemBuilder.legacy(Material.valueOf(configManager.getMPGString("yes-item")), 1, (short)0)
+                        .setDisplay(configManager.getMPGString("yes-string")).build(),
                 ButtonClickAction.plain((menuView, event)-> {
                     event.setCancelled(true);
-                    Emporium.getInstance().getRepository(MarketRepository.class).handleItemPurchase(buyer, product);
+                    Emporium.getInstance().getMarketManager().handleItemPurchase(buyer, product);
                 })
         );
 
         Button noButton = Button.clickable(
-                ItemBuilder.legacy(Material.valueOf(configRepository.getMPGString("no-item")), 1, (short)0)
-                        .setDisplay(configRepository.getMPGString("no-string")).build(),
+                ItemBuilder.legacy(Material.valueOf(configManager.getMPGString("no-item")), 1, (short)0)
+                        .setDisplay(configManager.getMPGString("no-string")).build(),
                 ButtonClickAction.plain((menuView, event)-> {
                     event.setCancelled(true);
-                    Emporium.getInstance().getRepository(MenuRepository.class).openMarketPlace(buyer);
+                    Emporium.getInstance().getMenuManager().openMarketPlace(buyer);
                 })
         );
         return Content.builder(capacity)
                 .apply(content -> {
-                    content.setButton(configRepository.getMarketPlaceGui().getConfig().getInt("yes-slot"), yesButton);
-                    content.setButton(configRepository.getMarketPlaceGui().getConfig().getInt("no-slot"), noButton);
+                    content.setButton(configManager.getMarketPlaceGui().getConfig().getInt("yes-slot"), yesButton);
+                    content.setButton(configManager.getMarketPlaceGui().getConfig().getInt("no-slot"), noButton);
                 })
                 .build();
     }
