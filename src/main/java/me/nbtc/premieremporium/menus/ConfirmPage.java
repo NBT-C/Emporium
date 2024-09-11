@@ -12,8 +12,7 @@ import io.github.mqzen.menus.titles.MenuTitles;
 import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.base.MarketItem;
 import me.nbtc.premieremporium.manager.ConfigManager;
-import me.nbtc.premieremporium.manager.MarketManager;
-import me.nbtc.premieremporium.manager.MenuManager;
+import me.nbtc.premieremporium.manager.enums.MarketType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +58,7 @@ public class ConfirmPage implements Menu {
                         .setDisplay(configManager.getMPGString("no-string")).build(),
                 ButtonClickAction.plain((menuView, event)-> {
                     event.setCancelled(true);
-                    Emporium.getInstance().getMenuManager().openMarketPlace(buyer);
+                    Emporium.getInstance().getMenuManager().openMarket(buyer, product.isBlack() ? MarketType.BLACK : MarketType.NORMAL);
                 })
         );
         return Content.builder(capacity)

@@ -1,15 +1,16 @@
 package me.nbtc.premieremporium.commands;
 
 import me.nbtc.premieremporium.Emporium;
+import me.nbtc.premieremporium.manager.enums.MarketType;
 import me.nbtc.premieremporium.utils.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TransactionsCommand extends Command {
-    public TransactionsCommand() {
-        super("transactions");
+public class BlackMarketCommand extends Command {
+    public BlackMarketCommand() {
+        super("blackmarket");
     }
 
     @Override
@@ -20,17 +21,17 @@ public class TransactionsCommand extends Command {
         }
 
         Player player = (Player) sender;
-        if (!player.hasPermission("marketplace.history")){
+        if (!player.hasPermission("blackmarket.view")){
             MessageUtil.msg(player, "no-permission");
             return false;
         }
 
         if (args.length != 0){
-            MessageUtil.msg(player, "invalid-argument-transactions");
+            MessageUtil.msg(player, "invalid-argument-blackmarket");
             return false;
         }
 
-        Emporium.getInstance().getMenuManager().openTransactions(player);
+        Emporium.getInstance().getMenuManager().openMarket(player, MarketType.BLACK);
         return false;
     }
 

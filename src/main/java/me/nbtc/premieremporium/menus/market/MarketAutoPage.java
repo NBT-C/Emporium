@@ -15,6 +15,7 @@ import io.github.mqzen.menus.titles.MenuTitles;
 import lombok.var;
 import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.manager.ConfigManager;
+import me.nbtc.premieremporium.manager.enums.MarketType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,11 +24,20 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class MarketAutoPage extends Page {
+    final MarketType marketType;
+
+    public MarketAutoPage(MarketType marketType){
+        this.marketType = marketType;
+    }
     ConfigManager configManager = Emporium.getInstance().getConfigManager();
+
+    private String parseBlackString(){
+        return marketType == MarketType.BLACK ? "black-" : "";
+    }
 
     @Override
     public int getPageButtonsCount(@Nullable PageView pageView, Player player) {
-        return configManager.getMarketPlaceGui().getConfig().getInt("items-per-page");
+        return configManager.getMarketPlaceGui().getConfig().getInt(marketType.name().toLowerCase() + "-items-per-page");
     }
 
     @Override
@@ -44,18 +54,20 @@ public class MarketAutoPage extends Page {
 
     @Override
     public String getName() {
-        return "MarketPlace";
+        return marketType.name();
     }
 
     @Override
     public @NotNull MenuTitle getTitle(DataRegistry dataRegistry, Player player) {
         int index = dataRegistry.getData("index");
-        return MenuTitles.createModern(configManager.getMPGString("name").replace("{page}", (index+1) + ""));
+        return MenuTitles.createModern(configManager.getMPGString(marketType.name().toLowerCase() + "-name").replace("{page}", (index+1) + ""));
     }
 
     @Override
     public @NotNull Capacity getCapacity(DataRegistry dataRegistry, Player player) {
-        return Capacity.ofRows(5);
+        return Capacity.ofRows(
+                configManager.getMarketPlaceGui().getConfig().getInt(marketType.name().toLowerCase() + "-rows")
+        );
     }
 
     @Override
@@ -63,11 +75,11 @@ public class MarketAutoPage extends Page {
         var builder = Content.builder(capacity);
 
         Button btn = Button.clickable(
-                ItemBuilder.legacy(Material.valueOf(configManager.getMPGString("style-item")), 1, (short)0)
-                        .setDisplay(configManager.getMPGString("style-item-name")).build(),
+                ItemBuilder.legacy(Material.valueOf(configManager.getMPGString(parseBlackString() + "style-item")), 1, (short)0)
+                        .setDisplay(configManager.getMPGString(parseBlackString() + "style-item-name")).build(),
                 ButtonClickAction.plain((menu, event) -> event.setCancelled(true))
         );
-        String[] stylePattern = configManager.getMarketPlaceGui().getConfig().getStringList("style-pattern").toArray(new String[0]);
+        String[] stylePattern = configManager.getMarketPlaceGui().getConfig().getStringList(parseBlackString() + "style-pattern").toArray(new String[0]);
         TextLayoutPane pane = new TextLayoutPane(
                 capacity,
                 TextLayout.builder().set('#', btn).build(),

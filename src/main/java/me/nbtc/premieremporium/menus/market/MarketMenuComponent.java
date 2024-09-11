@@ -7,7 +7,6 @@ import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.base.ItemOwner;
 import me.nbtc.premieremporium.base.MarketItem;
 import me.nbtc.premieremporium.menus.ConfirmPage;
-import me.nbtc.premieremporium.manager.ConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
@@ -27,19 +26,19 @@ public class MarketMenuComponent implements PageComponent {
 
     @Override
     public ItemStack toItem() {
-        List<String> lore = Emporium.getInstance().getConfigManager().getMarketPlaceGui().getConfig().getStringList("item-lore");
+        List<String> lore = Emporium.getInstance().getConfigManager().getMarketPlaceGui().getConfig().getStringList((marketItem.isBlack() ? "black-" : "") + "item-lore");
         Component[] finalLore = new Component[lore.size()];
 
         for (int i = 0; i < lore.size(); i++) {
             String s = lore.get(i)
-                    .replace("{price}", marketItem.getPrice() + "")
+                    .replace("{price}",  (marketItem.isBlack() ? ("&c&m" + (marketItem.getPrice() * 2) + "&a " + marketItem.getPrice()) : marketItem.getPrice() + ""))
                     .replace("{seller}", itemOwner.getName())
-                    .replace("{amount}", marketItem.getItem().getAmount() + "");
+                    .replace("{amount}", marketItem.getItemBehaviour().getAmount() + "");
             finalLore[i] = LegacyComponentSerializer.legacyAmpersand().deserialize(s);
         }
 
-        return ItemBuilder.modern(marketItem.getItem().getType(), marketItem.getItem().getAmount())
-                .setDisplay(Component.text(marketItem.getItem().getItemMeta() == null ? "&7" + marketItem.getItem().getType().name().replace("_", " ") : marketItem.getItem().getItemMeta().getDisplayName()))
+        return ItemBuilder.modern(marketItem.getItemBehaviour().getType(), marketItem.getItemBehaviour().getAmount())
+                .setDisplay(Component.text(marketItem.getItemBehaviour().getType().name().replace("_", " ")))
                 .setLore(finalLore)
                 .build();
     }

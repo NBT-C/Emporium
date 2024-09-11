@@ -5,7 +5,6 @@ import io.github.mqzen.menus.base.pagination.PageView;
 import io.github.mqzen.menus.misc.itembuilder.ItemBuilder;
 import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.base.Transaction;
-import me.nbtc.premieremporium.manager.ConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -33,12 +32,12 @@ public class TransactionMenuComponent implements PageComponent {
                     .replace("{price}", transaction.getItem().getPrice() + "")
                     .replace("{date}", dateFormat.format(new Date(transaction.getPurchaseDate())))
                     .replace("{seller}", transaction.getItem().getItemOwner().getName())
-                    .replace("{amount}", transaction.getItem().getItem().getAmount() + "");
+                    .replace("{amount}", transaction.getItem().getItemBehaviour().getAmount() + "");
             finalLore[i] = LegacyComponentSerializer.legacyAmpersand().deserialize(s);
         }
 
-        return ItemBuilder.modern(transaction.getItem().getItem().getType(), transaction.getItem().getItem().getAmount())
-                .setDisplay(Component.text(transaction.getItem().getItem().getItemMeta() == null ? "&7" + transaction.getItem().getItem().getType().name().replace("_", " ") : transaction.getItem().getItem().getItemMeta().getDisplayName()))
+        return ItemBuilder.modern(transaction.getItem().getItemBehaviour().getType(), transaction.getItem().getItemBehaviour().getAmount())
+                .setDisplay(Component.text(transaction.getItem().getItemBehaviour().getType().name().replace("_", " ")))
                 .setLore(finalLore)
                 .build();
     }

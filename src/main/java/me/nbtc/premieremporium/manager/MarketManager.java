@@ -9,18 +9,21 @@ import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.base.ItemOwner;
 import me.nbtc.premieremporium.base.MarketItem;
 import me.nbtc.premieremporium.base.Transaction;
+import me.nbtc.premieremporium.base.User;
+import me.nbtc.premieremporium.manager.enums.MarketType;
 import me.nbtc.premieremporium.utils.MessageUtil;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public class MarketManager {
     private List<MarketItem> marketItems = new ArrayList<>();
+    private final List<MarketItem> blackMarketItems = new ArrayList<>();
+
+    Random random = new Random();
 
     public void addItem(Player owner, ItemStack item, double price) {
         owner.getInventory().setItemInMainHand(null);
@@ -28,19 +31,61 @@ public class MarketManager {
         UUID ownerId = owner.getUniqueId();
         String ownerName = owner.getName();
         ItemOwner itemOwner = new ItemOwner(ownerName, ownerId);
-        MarketItem marketItem = new MarketItem(item, price, itemOwner);
+        MarketItem marketItem = new MarketItem(item, price, itemOwner, UUID.randomUUID());
 
         marketItems.add(marketItem);
+
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("{item}", item.getType().name().toLowerCase().replace("_", " "));
+        replacements.put("{price}", price + "");
+
+        MessageUtil.msg(owner, "sold-successfully", replacements);
     }
 
     public void handleItemPurchase(Player buyer, MarketItem item){
-        buyer.getInventory().addItem(item.getItem());
-        marketItems.remove(item);
+        User user = Emporium.getInstance().getUserManager().getUser(buyer);
 
-        Emporium.getInstance().getMenuManager().openMarketPlace(buyer.getPlayer());
-        MessageUtil.msg(buyer, "bought-successfully");
+        if (user.getMoney() < item.getPrice()){
+            MessageUtil.msg(buyer, "no-enough-money");
+            return;
+        }
 
+        buyer.getInventory().addItem(item.getItemBehaviour());
+
+        blackMarketItems.removeIf(i -> i.getRandomId().equals(item.getRandomId()));
+        marketItems.removeIf(i -> i.getRandomId().equals(item.getRandomId()));
+
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("{item}", item.getItemBehaviour().getType().name().toLowerCase().replace("_", " "));
+        replacements.put("{player}", buyer.getName());
+        replacements.put("{price}", item.getPrice() + "");
+
+        user.setMoney(user.getMoney() - item.getPrice());
+        Emporium.getInstance().getMenuManager().openMarket(buyer, item.isBlack() ? MarketType.BLACK : MarketType.NORMAL);
+        MessageUtil.msg(buyer, "bought-successfully", replacements);
+
+        UUID seller = item.getItemOwner().getUuid();
+        User userSeller = Emporium.getInstance().getUserManager().getUser(seller);
+
+        double earn = item.isBlack() ? item.getPrice() * 4 : item.getPrice();
+
+        replacements.put("{newprice}", earn + "");
+
+        userSeller.setMoney(userSeller.getMoney() + earn);
+        MessageUtil.msg(seller, "bought-item-successfully", replacements);
+
+        Emporium.getInstance().getDiscordManager().sendSoldItemNotification(item.getItemOwner().getName(), item.getItemBehaviour().getType().name().toLowerCase().replace("_", " "), buyer.getName(), item.getPrice() + "");
         Emporium.getInstance().getUserManager().getUser(buyer).getTransactions().add(new Transaction(System.currentTimeMillis(), item));
+    }
+    public void generateBlackMarket() {
+        for (MarketItem item : marketItems) {
+            if (random.nextBoolean()) {
+                MarketItem blackMarketItem = new MarketItem(item.getItemBehaviour(), item.getPrice(), item.getItemOwner(), item.getRandomId());
+                blackMarketItem.setBlack(true);
+                blackMarketItem.setPrice(item.getPrice() / 2);
+                blackMarketItems.add(blackMarketItem);
+            }
+        }
     }
     public void saveToMongo(){
         String serialized = Emporium.getInstance().getGson().toJson(marketItems);

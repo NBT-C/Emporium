@@ -1,0 +1,21 @@
+rows: 5
+name: "Transactions #{page}"
+next-page: "&eNext page"
+previous-page: "&ePrevious page"
+items-per-page: 21
+style-pattern:
+  - "#########"
+  - "#       #"
+  - "#       #"
+  - "#       #"
+  - "#########"
+style-item: BLACK_STAINED_GLASS_PANE
+style-item-name: " "
+
+item-lore:
+  - "&7Amount &8➡ &e{amount}"
+  - " "
+  - "&7Bought from &e{seller}"
+  - "&7Bought for &e${price}"
+  - " "
+  - "&7At: {date}"

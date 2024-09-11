@@ -4,23 +4,28 @@ import com.google.gson.Gson;
 import io.github.mqzen.menus.Lotus;
 import lombok.Getter;
 import me.nbtc.premieremporium.base.User;
+import me.nbtc.premieremporium.commands.BlackMarketCommand;
 import me.nbtc.premieremporium.commands.MarketPlaceCommand;
 import me.nbtc.premieremporium.commands.SellCommand;
 import me.nbtc.premieremporium.commands.TransactionsCommand;
 import me.nbtc.premieremporium.listener.ConnectionListener;
-import me.nbtc.premieremporium.manager.ConfigManager;
-import me.nbtc.premieremporium.manager.MarketManager;
-import me.nbtc.premieremporium.manager.MenuManager;
-import me.nbtc.premieremporium.manager.UserManager;
+import me.nbtc.premieremporium.manager.*;
 import me.nbtc.premieremporium.storage.DataManager;
+import me.nbtc.premieremporium.utils.DiscordWebhook;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 public final class Emporium extends JavaPlugin {
@@ -35,6 +40,12 @@ public final class Emporium extends JavaPlugin {
     private MarketManager marketManager;
     private MenuManager menuManager;
     private UserManager userManager;
+
+    private DiscordManager discordManager;
+
+    private final HashMap<UUID, List<Component>> pendingMessages = new HashMap<>();
+
+    private final DecimalFormat doubleFormat = new DecimalFormat("##.##");
 
     @Override
     public void onEnable() {
@@ -55,6 +66,7 @@ public final class Emporium extends JavaPlugin {
         }
 
         getMarketManager().loadFromMongo();
+        getMarketManager().generateBlackMarket();
         this.lotus = new Lotus(this, EventPriority.NORMAL);
     }
 
@@ -75,6 +87,7 @@ public final class Emporium extends JavaPlugin {
         marketManager = new MarketManager();
         menuManager = new MenuManager();
         userManager = new UserManager();
+        discordManager = new DiscordManager();
     }
 
     public @NotNull BukkitAudiences adventure() {
@@ -90,9 +103,11 @@ public final class Emporium extends JavaPlugin {
             commandMapField.setAccessible(true);
             SimpleCommandMap commandMap = (SimpleCommandMap) commandMapField.get(getServer());
 
-            commandMap.register("emporium", new MarketPlaceCommand());
-            commandMap.register("emporium", new SellCommand());
-            commandMap.register("emporium", new TransactionsCommand());
+            String fallbackPrefix = "emporium";
+            commandMap.register(fallbackPrefix, new MarketPlaceCommand());
+            commandMap.register(fallbackPrefix, new SellCommand());
+            commandMap.register(fallbackPrefix, new TransactionsCommand());
+            commandMap.register(fallbackPrefix, new BlackMarketCommand());
         } catch (Exception e) {
             getLogger().severe("Failed to register commands");
             e.printStackTrace();

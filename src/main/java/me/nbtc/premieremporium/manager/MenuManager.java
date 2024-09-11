@@ -7,6 +7,7 @@ import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.base.ItemOwner;
 import me.nbtc.premieremporium.base.MarketItem;
 import me.nbtc.premieremporium.base.Transaction;
+import me.nbtc.premieremporium.manager.enums.MarketType;
 import me.nbtc.premieremporium.menus.transactions.TransactionAutoPage;
 import me.nbtc.premieremporium.menus.transactions.TransactionMenuComponent;
 import me.nbtc.premieremporium.menus.market.MarketAutoPage;
@@ -18,18 +19,20 @@ import java.util.Collections;
 import java.util.List;
 
 public class MenuManager {
-    public void openMarketPlace(Player player){
+    public void openMarket(Player player, MarketType marketType){
         List<PageComponent> components = new ArrayList<>();
-        List<MarketItem> items = Emporium.getInstance().getMarketManager().getMarketItems();
+
+        List<MarketItem> items = marketType == MarketType.NORMAL ? Emporium.getInstance().getMarketManager().getMarketItems() : Emporium.getInstance().getMarketManager().getBlackMarketItems();
         List<MarketItem> reversedItems = new ArrayList<>(items);
         Collections.reverse(reversedItems);
+
         for (MarketItem marketItem : reversedItems){
             ItemOwner owner = marketItem.getItemOwner();
 
             components.add(new MarketMenuComponent(owner, marketItem));
         }
         Pagination pagination = Pagination.auto(Emporium.getInstance().getLotus())
-                .creator(new MarketAutoPage())
+                .creator(new MarketAutoPage(marketType))
                 .componentProvider(() ->components)
                 .build();
         try {

@@ -47,4 +47,7 @@ public class UserManager {
     public User getUser(@NotNull Player p) {
         return this.users.computeIfAbsent(p.getUniqueId(), k -> (new User(p.getUniqueId(), p.getName())));
     }
+    public User getUser(@NotNull UUID uuid) {
+        return this.users.computeIfAbsent(uuid, k -> (new User(uuid, "not_found")));
+    }
 }

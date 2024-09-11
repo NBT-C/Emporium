@@ -2,6 +2,7 @@ package me.nbtc.premieremporium.commands;
 
 import me.nbtc.premieremporium.Emporium;
 import me.nbtc.premieremporium.manager.MenuManager;
+import me.nbtc.premieremporium.manager.enums.MarketType;
 import me.nbtc.premieremporium.utils.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -31,7 +32,7 @@ public class MarketPlaceCommand extends Command {
             return false;
         }
 
-        Emporium.getInstance().getMenuManager().openMarketPlace(player);
+        Emporium.getInstance().getMenuManager().openMarket(player, MarketType.NORMAL);
         return false;
     }
 
